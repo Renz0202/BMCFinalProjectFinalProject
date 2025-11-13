@@ -1,0 +1,22 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always",
+    "source.organizeImports": "always"
+  },
+  "dart.lineLength": 100,
+  "dart.flutterHotReloadOnSave": "always",
+  "files.exclude": {
+    "**/build": true,
+    "**/.dart_tool": true,
+    "**/.idea": true
+  },
+  "search.exclude": {
+    "**/build": true,
+    "**/.dart_tool": true
+  },
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "[dart]": {
+    "editor.defaultFormatter": "Dart-Code.dart-code"
+  }
+}
