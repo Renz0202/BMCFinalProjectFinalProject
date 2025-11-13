@@ -97,30 +97,32 @@ class MyApp extends StatelessWidget {
           ),
         ),
         iconButtonTheme: IconButtonThemeData(
-          style: ButtonStyle(overlayColor: WidgetStatePropertyAll(kElectricBlue.withOpacity(0.08))),
+          style: ButtonStyle(
+            overlayColor: WidgetStatePropertyAll(kElectricBlue.withValues(alpha: 0.08)),
+          ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide(color: kSlateGrey.withOpacity(0.4)),
+            borderSide: BorderSide(color: kSlateGrey.withValues(alpha: 0.4)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide(color: kSlateGrey.withOpacity(0.3)),
+            borderSide: BorderSide(color: kSlateGrey.withValues(alpha: 0.3)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
             borderSide: const BorderSide(color: kElectricBlue, width: 2),
           ),
-          labelStyle: TextStyle(color: kSlateGrey.withOpacity(0.8)),
-          hintStyle: TextStyle(color: kSlateGrey.withOpacity(0.5)),
+          labelStyle: TextStyle(color: kSlateGrey.withValues(alpha: 0.8)),
+          hintStyle: TextStyle(color: kSlateGrey.withValues(alpha: 0.5)),
         ),
         cardTheme: CardThemeData(
           elevation: 2,
           color: Colors.white,
-          shadowColor: kElectricBlue.withOpacity(0.12),
+          shadowColor: kElectricBlue.withValues(alpha: 0.12),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           clipBehavior: Clip.antiAlias,
         ),
@@ -139,7 +141,7 @@ class MyApp extends StatelessWidget {
           disabledColor: Colors.grey.shade200,
           selectedColor: kElectricBlue,
           secondarySelectedColor: kElectricBlue,
-          side: BorderSide(color: kSlateGrey.withOpacity(0.25)),
+          side: BorderSide(color: kSlateGrey.withValues(alpha: 0.25)),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),

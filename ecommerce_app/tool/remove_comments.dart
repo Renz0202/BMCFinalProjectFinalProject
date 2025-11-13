@@ -6,7 +6,7 @@ import 'dart:io';
 /// Without --apply it runs in dry-run mode and prints a summary only.
 /// It processes files under the `lib/` directory by default.
 /// Optional flags:
-///   --path <relative_path>   Root directory to scan (default: lib)
+///   --path `relative_path`   Root directory to scan (default: lib)
 ///   --include-tests          Also process test/ directory
 ///   --backup                 Create .bak copies before modifying
 void main(List<String> args) async {
@@ -125,10 +125,7 @@ String _stripComments(String input) {
         inSingleQuote = false;
       } else if (inDoubleQuote && char == '"') {
         inDoubleQuote = false;
-      } else if (inTripleSingle &&
-          char == '\'' &&
-          next == '\'' &&
-          next2 == '\'') {
+      } else if (inTripleSingle && char == '\'' && next == '\'' && next2 == '\'') {
         inTripleSingle = false;
         buffer.write(next);
         buffer.write(next2);
