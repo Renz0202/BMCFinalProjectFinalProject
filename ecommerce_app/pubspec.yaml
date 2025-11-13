@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.3+4
 
 environment:
   sdk: ^3.8.1
@@ -40,6 +40,11 @@ dependencies:
   flutter_native_splash: 2.4.0
   provider: ^6.1.2
   intl: ^0.20.2
+  google_fonts: ^6.3.2
+  firebase_storage: ^13.0.4
+  image_picker: ^1.2.1
+  url_launcher: ^6.3.2
+  cached_network_image: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -65,18 +70,38 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-  - assets/splash.jpg
-  - assets/images/
+  - assets/image/
 
 # Configuration for flutter_native_splash. After adding this, run:
 #   flutter pub get
 #   dart run flutter_native_splash:create
 flutter_native_splash:
-  color: "#FFFFFF"
-  image: assets/images/splash_logo.png
+  # Base colors & images (light + dark) for responsive splash
+  color: "#121417"
+  color_dark: "#121417"
+  image: assets/image/PA_BG.png
+  image_dark: assets/image/PA_BG.png
 
-  android_12:
-    color: "#FFFFFF"
-    image: assets/images/splash_logo.png
+  # Optional branding (shown at bottom); reuse existing asset
+  # branding removed (no matching asset present)
 
+  # Center content to avoid cropping on narrow devices
+  android_gravity: center
+  ios_content_mode: center
+  fullscreen: true
+
+  # Platforms
+  android: true
+  ios: true
   web: true
+
+  # Android 12 specific (separate layer model)
+  android_12:
+    image: assets/image/PA_BG.png
+    image_dark: assets/image/PA_BG.png
+    icon_background_color: "#FFFFFF"
+    icon_background_color_dark: "#121417"
+
+  # After editing run:
+  #   flutter pub get
+  #   dart run flutter_native_splash:create

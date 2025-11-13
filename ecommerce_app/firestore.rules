@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      // Allow users to update their own profile EXCEPT role field; only admin can set role
+      allow update: if isOwner(userId) && !('role' in request.resource.data.diff(resource.data).changedKeys())
+                    || isAdmin();
+      allow create: if isSignedIn();
+    }
+
+    // Products: anyone can read, only admins can write
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Orders: user can create and read own orders; admin can read/write all
+    match /orders/{orderId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      // Users can update their own order only for allowed fields (e.g., cancel), admins can update any
+      allow update: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['status']));
+      allow delete: if isAdmin();
+    }
+
+    // Notifications: user can read own, admin can create for users
+    match /notifications/{notifId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Chats: user can read/write own chat thread; admin can read/write all
+    match /chats/{chatId} {
+      allow read, write: if isAdmin() || isOwner(chatId);
+    }
+  }
+}

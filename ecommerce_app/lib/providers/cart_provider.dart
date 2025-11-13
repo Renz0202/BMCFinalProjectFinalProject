@@ -51,15 +51,13 @@ class CartProvider with ChangeNotifier {
 
   // 4. Total number of items (sum of quantities)
   int get itemCount {
-    int total = 0;
-    for (var item in _items) {
-      total += item.quantity;
-    }
-    return total;
+    // Use fold for a concise sum of quantities
+    return _items.fold<int>(0, (total, item) => total + item.quantity);
   }
 
   // 5. Total price
-  double get totalPrice {
+  // Rename totalPrice to subtotal (price before VAT)
+  double get subtotal {
     double total = 0.0;
     for (var item in _items) {
       total += (item.price * item.quantity);
@@ -67,10 +65,28 @@ class CartProvider with ChangeNotifier {
     return total;
   }
 
+  // VAT (12%)
+  double get vat {
+    return subtotal * 0.12;
+  }
+
+  // Final total including VAT
+  double get totalPriceWithVat {
+    return subtotal + vat;
+  }
+
   // Constructor: listen to auth changes and fetch/clear cart accordingly
+  // EMPTY constructor: create the provider without starting listeners
   CartProvider() {
     if (kDebugMode) {
-      print('CartProvider initialized');
+      print('CartProvider created.');
+    }
+  }
+
+  // Public method to initialize the auth listener. Call this before runApp.
+  void initializeAuthListener() {
+    if (kDebugMode) {
+      print('CartProvider auth listener initialized');
     }
     _authSubscription = _auth.authStateChanges().listen((User? user) {
       if (user == null) {
@@ -80,7 +96,6 @@ class CartProvider with ChangeNotifier {
         }
         _userId = null;
         _items = [];
-        notifyListeners();
       } else {
         // User logged in
         _userId = user.uid;
@@ -89,20 +104,23 @@ class CartProvider with ChangeNotifier {
         }
         _fetchCart();
       }
+      notifyListeners();
     });
   }
 
-  // 6. Add item to cart
-  void addItem(String id, String name, double price) {
+  // 6. Add item to cart (now supports adding multiple quantity at once)
+  void addItem(String id, String name, double price, int quantity) {
     // 7. Check if item is already in the cart
     final index = _items.indexWhere((item) => item.id == id);
 
     if (index != -1) {
-      // If present, increase quantity
-      _items[index].quantity++;
+      // If present, increase quantity by the requested amount
+      _items[index].quantity += quantity;
     } else {
-      // Else, add as new
-      _items.add(CartItem(id: id, name: name, price: price));
+      // Else, add as new with the specified quantity
+      _items.add(
+        CartItem(id: id, name: name, price: price, quantity: quantity),
+      );
     }
 
     // Save to Firestore (if logged in) and update UI
@@ -139,12 +157,16 @@ class CartProvider with ChangeNotifier {
       final List<Map<String, dynamic>> cartData = _items
           .map((item) => item.toJson())
           .toList();
-      final double total = totalPrice;
+      final double sub = subtotal;
+      final double v = vat;
+      final double total = totalPriceWithVat;
       final int count = itemCount;
 
       await _firestore.collection('orders').add({
         'userId': _userId,
         'items': cartData,
+        'subtotal': sub,
+        'vat': v,
         'totalPrice': total,
         'itemCount': count,
         'status': 'Pending',
